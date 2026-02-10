@@ -2,27 +2,34 @@ ifeq ($(origin CXX),default)
 	CXX = g++
 endif
 
-TARGET = liblogger.so
+TARGET := liblogger.so
 
 CXXFLAGS ?= -Wall -Wextra -O0 -g -std=c++17
-OUT_O_DIR ?= build
-COMMONINC = -I./include
+COMMONINC = -I./include/logger
+override CXXFLAGS += -fPIC $(COMMONINC)
+LDFLAGS = -shared
+
+BUILD_DIR ?= ../build
+LIB_OUTPUT_DIR ?= $(BUILD_DIR)/lib
+OBJ_DIR ?= $(BUILD_DIR)/obj/logger
+
 SRC = ./src
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-override CXXFLAGS += $(COMMONINC)
-
 CPPSRC = src/main.cpp
 
-PREF = $(OUT_O_DIR)/obj
+PREF = $(BUILD_DIR)/obj/logger
 CPPOBJ := $(addprefix $(PREF)/,$(CPPSRC:.cpp=.o))
 DEPS = $(CPPOBJ:.o=.d)
 
 .PHONY: all
 all: logger
 
-logger: $(CPPOBJ)
-	$(CXX) $(CXXFLAGS) $(CPPOBJ) -o $@
+logger: $(LIB_OUTPUT_DIR)/$(TARGET)
+
+$(LIB_OUTPUT_DIR)/$(TARGET): $(CPPOBJ)
+	@mkdir -p $(@D)
+	$(CXX) $(LDFLAGS) $^ -o $@
 	
 $(CPPOBJ) : $(PREF)/%.o : %.cpp
 	@mkdir -p $(@D)

@@ -3,17 +3,35 @@ ifeq ($(origin CXX),default)
 endif
 
 CXXFLAGS ?= -Wall -Wextra -pedantic -O0 -g -std=c++17
-OUT_O_DIR ?= build
+LDFLAGS ?=
+
+BUILD_DIR ?= build
+OUTPUT_DIR ?= $(BUILD_DIR)/bin
+LIB_OUTPUT_DIR ?= $(BUILD_DIR)/lib
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-LIBDIR = logger
+LOGGER_DIR := logger
+APP_DIR := app
 
-.PHONY: all logger
-all: logger
+.PHONY: all logger app clean
+all: logger # app
 
 logger:
-	$(MAKE) -C $(LIBDIR) OUT_O_DIR=../$(OUT_O_DIR) CXXFLAGS=$(CXXFLAGS) ROOT_DIR=../$(ROOT_DIR)
+	$(MAKE) -C $(LOGGER_DIR) \
+		BUILD_DIR=../$(BUILD_DIR) \
+		CXXFLAGS="$(CXXFLAGS)" \
+		LIB_OUTPUT_DIR=../$(LIB_OUTPUT_DIR)
+
+app: logger
+	$(MAKE) -C $(APP_DIR) \
+		BUILD_DIR=../$(BUILD_DIR) \
+		CXXFLAGS="$(CXXFLAGS)" \
+		LDFLAGS="$(LDFLAGS) -L../$(LIB_OUTPUT_DIR) -llogger" \
+		OUTPUT_DIR=../$(OUTPUT_DIR) \
+		LIB_OUTPUT_DIR=../$(LIB_OUTPUT_DIR)
+
+run: app
+
 	
-.PHONY: clean
 clean:
-	$(MAKE) clean -C $(LIBDIR)
+	$(MAKE) clean -C $(LOGGER_DIR)
