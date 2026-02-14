@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <string>
+#include <thread>
 
 #include "LogLevel.hpp"
 
@@ -12,6 +13,7 @@ struct LogRecord
 {
     std::string message;
     std::chrono::system_clock::time_point timestamp;
+    std::thread::id threadId;
     LogLevel level;
 };
 

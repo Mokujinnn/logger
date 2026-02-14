@@ -1,10 +1,7 @@
 #include "DefaultLogger.hpp"
 #include "LogRecord.hpp"
 
-namespace name
-{
-
-} // namespace name
+using Clock = std::chrono::system_clock;
 
 namespace logger
 {
@@ -18,7 +15,7 @@ void DefaultLogger::log(const std::string &message, LogLevel level)
 {
     if (minlevel_ < level)
     {
-        sink_->write({message, std::chrono::system_clock::now(), level});
+        sink_->write({message, Clock::now(), std::this_thread::get_id(), level});
     }
 }
 

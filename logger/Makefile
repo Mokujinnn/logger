@@ -13,10 +13,12 @@ BUILD_DIR ?= ../build
 LIB_OUTPUT_DIR ?= $(BUILD_DIR)/lib
 OBJ_DIR ?= $(BUILD_DIR)/obj/logger
 
+TARGET := $(LIB_OUTPUT_DIR)/$(TARGET)
+
 SRC = ./src
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-CPPSRC = src/main.cpp
+CPPSRC = src/DefaultLogger.cpp src/FileSink.cpp src/TextFormatter.cpp
 
 PREF = $(BUILD_DIR)/obj/logger
 CPPOBJ := $(addprefix $(PREF)/,$(CPPSRC:.cpp=.o))
@@ -25,9 +27,9 @@ DEPS = $(CPPOBJ:.o=.d)
 .PHONY: all
 all: logger
 
-logger: $(LIB_OUTPUT_DIR)/$(TARGET)
+logger: $(TARGET)
 
-$(LIB_OUTPUT_DIR)/$(TARGET): $(CPPOBJ)
+$(TARGET): $(CPPOBJ)
 	@mkdir -p $(@D)
 	$(CXX) $(LDFLAGS) $^ -o $@
 	
