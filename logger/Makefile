@@ -18,7 +18,7 @@ TARGET := $(LIB_OUTPUT_DIR)/$(TARGET)
 SRC = ./src
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-CPPSRC = src/DefaultLogger.cpp src/FileSink.cpp src/TextFormatter.cpp
+CPPSRC = $(wildcard $(SRC)/*.cpp)
 
 PREF = $(BUILD_DIR)/obj/logger
 CPPOBJ := $(addprefix $(PREF)/,$(CPPSRC:.cpp=.o))
