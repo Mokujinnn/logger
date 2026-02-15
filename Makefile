@@ -31,9 +31,6 @@ app: logger
 		OUTPUT_DIR=../$(OUTPUT_DIR) \
 		LIB_OUTPUT_DIR=../$(LIB_OUTPUT_DIR)
 
-run: app
-
-	
 clean:
 	$(MAKE) clean -C $(LOGGER_DIR)
 	$(MAKE) clean -C $(APP_DIR)
