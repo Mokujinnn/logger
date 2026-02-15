@@ -5,24 +5,33 @@ endif
 TARGET = app
 
 CXXFLAGS ?= -Wall -Wextra -O0 -g -std=c++17
-OUT_O_DIR ?= build
-COMMONINC = -I./include
+COMMONINC ?= -I./logger/include
+override CXXFLAGS += -fPIC $(COMMONINC)
+LDFLAGS ?=
+override LDFLAGS += -Wl,-rpath,'$$ORIGIN/../lib'
+
+BUILD_DIR ?= ../build
+BIN_OUTPUT_DIR ?= $(BUILD_DIR)/bin
+LIB_OUTPUT_DIR ?= $(BUILD_DIR)/lib
+OBJ_DIR ?= $(BUILD_DIR)/obj/app
+
+TARGET := $(BIN_OUTPUT_DIR)/$(TARGET)
+
 SRC = ./src
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-override CXXFLAGS += $(COMMONINC)
+CPPSRC = $(wildcard $(SRC)/*.cpp)
 
-CPPSRC = src/main.cpp
-
-PREF = $(OUT_O_DIR)/obj
+PREF = $(BUILD_DIR)/obj/app
 CPPOBJ := $(addprefix $(PREF)/,$(CPPSRC:.cpp=.o))
 DEPS = $(CPPOBJ:.o=.d)
 
 .PHONY: all app
-all: app
+all: $(TARGET)
 
-app: $(CPPOBJ)
-	$(CXX) $(CXXFLAGS) $(CPPOBJ) -o $@
+$(TARGET): $(CPPOBJ)
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(CPPOBJ) -o $@ $(LDFLAGS)
 	
 $(CPPOBJ) : $(PREF)/%.o : %.cpp
 	@mkdir -p $(@D)
@@ -34,7 +43,7 @@ $(DEPS) : $(PREF)/%.d : %.cpp
 
 .PHONY: clean
 clean:
-	rm -rf $(CPPOBJ) $(DEPS) $(PREF) 
+	rm -rf $(CPPOBJ) $(DEPS) $(PREF) $(TARGET)
 
 # targets which we have no need to recollect deps
 NODEPS = clean

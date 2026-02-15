@@ -5,7 +5,7 @@ endif
 TARGET := liblogger.so
 
 CXXFLAGS ?= -Wall -Wextra -O0 -g -std=c++17
-COMMONINC = -I./include/logger
+COMMONINC = -I../logger/include/logger
 override CXXFLAGS += -fPIC $(COMMONINC)
 LDFLAGS = -shared
 
@@ -13,10 +13,12 @@ BUILD_DIR ?= ../build
 LIB_OUTPUT_DIR ?= $(BUILD_DIR)/lib
 OBJ_DIR ?= $(BUILD_DIR)/obj/logger
 
+TARGET := $(LIB_OUTPUT_DIR)/$(TARGET)
+
 SRC = ./src
 ROOT_DIR ?= $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-CPPSRC = src/main.cpp
+CPPSRC = $(wildcard $(SRC)/*.cpp)
 
 PREF = $(BUILD_DIR)/obj/logger
 CPPOBJ := $(addprefix $(PREF)/,$(CPPSRC:.cpp=.o))
@@ -25,9 +27,9 @@ DEPS = $(CPPOBJ:.o=.d)
 .PHONY: all
 all: logger
 
-logger: $(LIB_OUTPUT_DIR)/$(TARGET)
+logger: $(TARGET)
 
-$(LIB_OUTPUT_DIR)/$(TARGET): $(CPPOBJ)
+$(TARGET): $(CPPOBJ)
 	@mkdir -p $(@D)
 	$(CXX) $(LDFLAGS) $^ -o $@
 	
@@ -41,7 +43,7 @@ $(DEPS) : $(PREF)/%.d : %.cpp
 
 .PHONY: clean
 clean:
-	rm -rf $(CPPOBJ) $(DEPS) $(PREF) 
+	rm -rf $(CPPOBJ) $(DEPS) $(PREF) $(TARGET)
 
 # targets which we have no need to recollect deps
 NODEPS = clean

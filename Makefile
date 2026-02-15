@@ -14,7 +14,7 @@ LOGGER_DIR := logger
 APP_DIR := app
 
 .PHONY: all logger app clean
-all: logger # app
+all: logger app
 
 logger:
 	$(MAKE) -C $(LOGGER_DIR) \
@@ -25,13 +25,12 @@ logger:
 app: logger
 	$(MAKE) -C $(APP_DIR) \
 		BUILD_DIR=../$(BUILD_DIR) \
+		COMMONINC="-I../$(LOGGER_DIR)/include" \
 		CXXFLAGS="$(CXXFLAGS)" \
 		LDFLAGS="$(LDFLAGS) -L../$(LIB_OUTPUT_DIR) -llogger" \
 		OUTPUT_DIR=../$(OUTPUT_DIR) \
 		LIB_OUTPUT_DIR=../$(LIB_OUTPUT_DIR)
 
-run: app
-
-	
 clean:
 	$(MAKE) clean -C $(LOGGER_DIR)
+	$(MAKE) clean -C $(APP_DIR)
