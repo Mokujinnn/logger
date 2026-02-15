@@ -5,7 +5,7 @@ endif
 TARGET := liblogger.so
 
 CXXFLAGS ?= -Wall -Wextra -O0 -g -std=c++17
-COMMONINC = -I./include/logger
+COMMONINC = -I../logger/include/logger
 override CXXFLAGS += -fPIC $(COMMONINC)
 LDFLAGS = -shared
 
@@ -43,7 +43,7 @@ $(DEPS) : $(PREF)/%.d : %.cpp
 
 .PHONY: clean
 clean:
-	rm -rf $(CPPOBJ) $(DEPS) $(PREF) 
+	rm -rf $(CPPOBJ) $(DEPS) $(PREF) $(TARGET)
 
 # targets which we have no need to recollect deps
 NODEPS = clean

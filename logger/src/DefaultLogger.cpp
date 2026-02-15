@@ -13,7 +13,7 @@ DefaultLogger::DefaultLogger(std::shared_ptr<ISink> sink, LogLevel level)
 
 void DefaultLogger::log(const std::string &message, LogLevel level)
 {
-    if (minlevel_ < level)
+    if (minlevel_ <= level)
     {
         sink_->write({message, Clock::now(), std::this_thread::get_id(), level});
     }
